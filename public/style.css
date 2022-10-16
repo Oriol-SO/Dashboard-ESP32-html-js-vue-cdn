@@ -1,0 +1,35 @@
+.led_on{
+    border: 1px solid;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
+.titulo{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: blue;
+}
+#datotension{
+  font-family: 'DS-Digital', sans-serif;
+  font-size: 55px;
+  color: #75dfd8;
+}
+.contenedorimg{
+  width: 100%;
+}
+.contenedorimg img{
+  width: 80%;
+}
+.rotate {
+  
+  animation: rotation .5s infinite linear;
+}
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
