@@ -1,178 +1,387 @@
-/*
-var config = {
-  apiKey: "AIzaSyBfDRFn7IyUZDQCSNAS0bQ-lbWOk4pRrY0",
-  authDomain: "proyectoesp32-1d1f2.firebaseapp.com",
-  projectId: "proyectoesp32-1d1f2",
-  storageBucket: "proyectoesp32-1d1f2.appspot.com",
-  messagingSenderId: "490357321719",
-  appId: "1:490357321719:web:4a76511edeffcfa5f0c8f2",
-  measurementId: "G-CM1PV9R4TF"
-};
-firebase.initializeApp(config);
-const db = firebase.firestore();*/
-var valorslider1=0
 
 let app = new Vue({
   el: '#app',
   vuetify: new Vuetify(),
-  data: {
-    client: mqtt.connect("ws://broker.emqx.io:8083/mqtt"),
-    estado_boton: 0,
-    temperatura:23,
-    humedad:37,
-    limite:'',
-    tension:0,
-    valorslider:0,
-    valorslidermenor:0,
-    estado_motor:0,
-    colorcab:'red',
-    
-     //: new Audio("audio.mp3"),
-    publish: {
-      topic: 'oriolport/02',
-      qos: 0,
-      payload: '0',
-    },
-    
-  },mounted(){
+  data(){
+    return{
+        dialog:false,
+        sistema:true,
+        led:0,
+        client: mqtt.connect("ws://broker.emqx.io:8083/mqtt"),
+        humedad:0,
+        temperatura:0,
+        lluvia:0,
+        hora: 12,
+        minutos: 35,
+        segundos: 59,
+        dia: 20,
+        mes: "Octubre",
+        verano: 1,
+        estacion:1,
+        nombreest:'Verano',
+        estado_motor:0,
+        tiempo:0,
+       // hume:0,
+        count:0,
+       datos:{
+            humedad:0,
+            temperatura:0,
+            hora:0,
+            estacion:0,
+            lluvia:0,
+        },
 
-    /*
-    db.collection("tension").doc('Cp1EZMP8tdMUpG0AZBTZ')
-    .onSnapshot((doc) => {
-        var dato=doc.data();
-
-           this.valorslider=dato.valor2;
-           this.valorslidermenor=dato.valor1;
-
-    });*/
-    this.client.on('connect', ()=>{
-      console.log('conectado')
-      this.client.subscribe('oriolport/01',(err)=> {
-        if (!err) {
-          this.client.publish('oriolport/02', '0')
-        }
-      })
-    })
-      this.client.on('message',(topic, message)=>{
-        // message is Buffer
-        if(topic=='oriolport/01'){
-          //console.log(message.toString())
-          let js=message.toString();
-          let tension=JSON.parse(js);
-          console.log(tension)
-          this.tension=tension.tension;
-        }
-      })
-    
-  },   
-  computed:{
-    color() {
-      if (this.tension < 100) return '#90CAF9'
-      if (this.tension < 250) return '#42A5F5'
-      if (this.tension < 500) return '#1565C0'
-      if (this.tension < 750) return '#26C6DA'
-      if (this.tension < 1000) return '#00ACC1'
-      if (this.tension < 1250) return '#00838F'
-      if (this.tension < 1500) return '#80DEEA'
-      if (this.tension < 1750) return '#1DE9B6'
-      if (this.tension < 2000) return '#66BB6A'
-      if (this.tension < 2100) return '#69F0AE'
-      if (this.tension < 2250) return '#00E676'
-      if (this.tension < 2500) return '#76FF03'
-      if (this.tension < 2750) return '#B2FF59'
-      if (this.tension < 3000) return '#F4FF81'
-      if (this.tension < 3100) return '#EEFF41'
-      if (this.tension < 3250) return '#FFEE58'
-      if (this.tension < 3500) return '#FBC02D'
-      if (this.tension < 3750) return '#FF8F00'
-      if (this.tension < 4000) return '#FF7043'
-      if (this.tension < 4095) return '#673AB7'
-      return  'red'
-    },
-    tensiometro(){
-      //return this.slid;
-      //this.valorslider=this.tension;
-      if( this.tension<this.valorslider && this.tension>this.valorslidermenor){
-        this.estado_motor=1;
-        this.colorcab='amber darken-1';
-      }else{
-        this.estado_motor=0;
-        this.colorcab='pink accent-3';
-      }
-      return (this.tension*100/4995).toFixed(1);
-      
-    },
-    enviartensionmayor(){
-      if(this.valorslider>this.valorslidermenor){
-          var limite='{"tipo":"tension","tension1" :'+this.valorslider+',"tension2":'+this.valorslidermenor+'}';
-          //this.connection.send(limite);
-      }
-
+        net:new brain.NeuralNetwork(),
     }
-    
-  },        
-  methods:{
+},computed:{
+    hume(){
+        return Math.round((((1300-this.humedad)/1400)*100))
+    },
+    temp(){
+        return Math.round(this.temperatura/100)
+    },
+    hor(){
+        this.obtenerhora();
+        return '';
+    },
+},    
+mounted(){
+    this.net.train([
+        {input:[20,80,0,16,3],output:[1]},
+        {input:[28,22,0,11,4],output:[1]},
+        {input:[40,26,0,8,3],output:[1]},
+        {input:[25,30,0,13,4],output:[1]},
+        {input:[27,3,0,15,1],output:[1]},
+        {input:[25,10,0,10,2],output:[1]},
+        {input:[31,7,0,16,1],output:[1]},
+        {input:[36,24,0,10,1],output:[1]},
+        {input:[27,5,0,9,4],output:[1]},
+        {input:[30,11,0,8,1],output:[1]},
+        {input:[24,28,0,15,1],output:[1]},
+        {input:[36,24,0,16,1],output:[1]},
+        {input:[25,4,0,10,4],output:[1]},
+        {input:[35,17,0,9,3],output:[1]},
+        {input:[29,10,0,8,2],output:[1]},
+        {input:[26,9,0,12,3],output:[1]},
+        {input:[23,17,0,14,3],output:[1]},
+        {input:[37,10,0,8,3],output:[1]},
+        {input:[31,19,0,10,1],output:[1]},
+        {input:[29,0,0,14,4],output:[1]},
+        {input:[34,9,0,12,1],output:[1]},
+        {input:[26,10,0,9,1],output:[1]},
+        {input:[23,2,0,10,3],output:[1]},
+        {input:[36,1,0,14,2],output:[1]},
+        {input:[23,19,0,8,2],output:[1]},
+        {input:[36,17,0,10,1],output:[1]},
+        {input:[35,8,0,12,4],output:[1]},
+        {input:[30,6,0,10,4],output:[1]},
+        {input:[30,11,0,8,1],output:[1]},
+        {input:[30,17,0,16,2],output:[1]},
+        {input:[26,24,0,12,4],output:[1]},
+        {input:[26,9,0,13,4],output:[1]},
+        {input:[30,23,0,8,4],output:[1]},
+        {input:[26,16,0,16,2],output:[1]},
+        {input:[23,17,0,9,2],output:[1]},
+        {input:[33,2,0,9,1],output:[1]},
+        {input:[23,21,0,9,1],output:[1]},
+        {input:[26,12,0,16,2],output:[1]},
+        {input:[40,4,0,12,3],output:[1]},
+        {input:[25,24,0,11,1],output:[1]},
+        {input:[32,22,0,13,2],output:[1]},
+        {input:[32,15,0,8,4],output:[1]},
+        {input:[39,18,0,15,4],output:[1]},
+        {input:[34,3,0,15,1],output:[1]},
+        {input:[34,30,0,9,3],output:[1]},
+        {input:[34,12,0,14,2],output:[1]},
+        {input:[32,11,0,13,3],output:[1]},
+        {input:[31,9,0,14,1],output:[1]},
+        {input:[39,3,0,11,2],output:[1]},
+        {input:[26,1,0,16,3],output:[1]},
+        {input:[36,13,0,11,1],output:[1]},
+        {input:[31,18,0,11,1],output:[1]},
+        {input:[29,11,0,16,3],output:[1]},
+        {input:[36,2,0,14,1],output:[1]},
+        {input:[40,22,0,14,4],output:[1]},
+        {input:[30,8,0,8,1],output:[1]},
+        {input:[31,17,0,8,3],output:[1]},
+        {input:[37,25,0,15,1],output:[1]},
+        {input:[27,14,0,8,3],output:[1]},
+        {input:[30,4,0,16,4],output:[1]},
+        {input:[29,15,0,8,2],output:[1]},
+        {input:[35,5,0,14,4],output:[1]},
+        {input:[39,7,0,15,3],output:[1]},
+        {input:[27,25,0,8,3],output:[1]},
+        {input:[23,30,0,13,3],output:[1]},
+        {input:[31,1,0,11,1],output:[1]},
+        {input:[33,2,0,9,3],output:[1]},
+        {input:[30,2,0,14,2],output:[1]},
+        {input:[38,24,0,8,3],output:[1]},
+        {input:[36,17,0,10,4],output:[1]},
+        {input:[37,21,0,12,1],output:[1]},
+        {input:[28,4,0,13,3],output:[1]},
+        {input:[24,0,0,15,4],output:[1]},
+        {input:[34,30,0,11,4],output:[1]},
+        {input:[35,20,0,16,1],output:[1]},
+        {input:[32,28,0,16,4],output:[1]},
+        {input:[29,21,0,8,2],output:[1]},
+        {input:[33,7,0,16,3],output:[1]},
+        {input:[36,28,0,16,3],output:[1]},
+        {input:[25,19,0,15,4],output:[1]},
+        {input:[29,8,0,11,1],output:[1]},
+        {input:[34,14,0,15,1],output:[1]},
+        {input:[39,18,0,15,3],output:[1]},
+        {input:[40,28,0,8,4],output:[1]},
+        {input:[37,22,0,13,4],output:[1]},
+        {input:[37,19,0,15,3],output:[1]},
+        {input:[32,8,0,9,2],output:[1]},
+        {input:[29,28,0,15,2],output:[1]},
+        {input:[40,16,0,16,1],output:[1]},
+        {input:[31,14,0,9,4],output:[1]},
+        {input:[32,8,0,13,2],output:[1]},
+        {input:[36,2,0,16,1],output:[1]},
+        {input:[35,28,0,14,2],output:[1]},
+        {input:[34,4,0,10,3],output:[1]},
+        {input:[23,5,0,9,4],output:[1]},
+        {input:[23,22,0,9,1],output:[1]},
+        {input:[32,0,0,12,3],output:[1]},
+        {input:[30,14,0,13,3],output:[1]},
+        {input:[28,17,0,8,2],output:[1]},
+        {input:[39,11,0,13,1],output:[1]},
+        {input:[30,7,0,11,2],output:[1]},
+        {input:[39,14,0,16,2],output:[1]},
+        {input:[1,15,0,16,3],output:[0]},
+        {input:[9,13,0,15,2],output:[0]},
+        {input:[11,6,1,8,4],output:[0]},
+        {input:[7,6,1,13,1],output:[0]},
+        {input:[13,4,1,16,2],output:[0]},
+        {input:[6,10,0,8,3],output:[0]},
+        {input:[15,20,1,10,4],output:[0]},
+        {input:[14,19,1,16,3],output:[0]},
+        {input:[13,10,1,11,2],output:[0]},
+        {input:[9,18,1,13,3],output:[0]},
+        {input:[12,26,0,10,2],output:[0]},
+        {input:[8,11,1,12,3],output:[0]},
+        {input:[14,0,1,12,4],output:[0]},
+        {input:[10,5,0,9,3],output:[0]},
+        {input:[3,21,1,11,2],output:[0]},
+        {input:[12,12,0,11,3],output:[0]},
+        {input:[2,26,0,8,3],output:[0]},
+        {input:[9,0,0,15,1],output:[0]},
+        {input:[10,27,0,8,2],output:[0]},
+        {input:[11,8,1,13,4],output:[0]},
+        {input:[10,30,1,14,2],output:[0]},
+        {input:[13,19,0,16,2],output:[0]},
+        {input:[8,8,0,11,3],output:[0]},
+        {input:[14,14,0,9,4],output:[0]},
+        {input:[9,4,1,16,2],output:[0]},
+        {input:[12,26,0,12,4],output:[0]},
+        {input:[14,4,0,9,1],output:[0]},
+        {input:[5,13,0,16,2],output:[0]},
+        {input:[6,27,1,15,1],output:[0]},
+        {input:[11,18,1,14,3],output:[0]},
+        {input:[9,6,0,16,3],output:[0]},
+        {input:[3,4,1,9,2],output:[0]},
+        {input:[11,24,1,10,3],output:[0]},
+        {input:[3,15,1,13,4],output:[0]},
+        {input:[11,19,1,10,1],output:[0]},
+        {input:[6,30,0,8,3],output:[0]},
+        {input:[2,16,1,12,4],output:[0]},
+        {input:[0,26,1,16,3],output:[0]},
+        {input:[9,18,0,13,3],output:[0]},
+        {input:[11,28,1,14,3],output:[0]},
+        {input:[8,20,0,15,3],output:[0]},
+        {input:[5,16,0,13,2],output:[0]},
+        {input:[6,27,0,9,1],output:[0]},
+        {input:[6,0,1,13,3],output:[0]},
+        {input:[0,28,0,14,2],output:[0]},
+        {input:[9,28,1,9,1],output:[0]},
+        {input:[4,19,1,8,3],output:[0]},
+        {input:[3,23,0,9,4],output:[0]},
+        {input:[17,6,0,8,1],output:[1]},
+        {input:[17,4,0,9,1],output:[1]},
+        {input:[20,3,0,13,1],output:[1]},
+        {input:[19,3,0,13,1],output:[1]},
+        {input:[19,6,0,12,1],output:[1]},
+        {input:[19,5,0,14,1],output:[1]},
+        {input:[17,3,0,13,1],output:[1]},
+        {input:[17,4,0,8,1],output:[1]},
+        {input:[19,9,0,14,1],output:[1]},
+        {input:[16,3,0,8,1],output:[1]},
+        {input:[20,9,0,8,1],output:[1]},
+        {input:[20,9,0,11,1],output:[1]},
+        {input:[19,10,0,8,1],output:[1]},
+        {input:[20,7,0,9,1],output:[1]},
+        {input:[15,6,0,14,1],output:[1]},
+        {input:[19,2,0,13,1],output:[1]},
+        {input:[17,1,0,10,1],output:[1]},
+        {input:[19,7,0,9,1],output:[1]},
+        {input:[17,8,0,11,1],output:[1]},
+        {input:[20,5,0,8,1],output:[1]},
+        {input:[16,0,0,12,1],output:[1]},
+        {input:[15,0,1,8,1],output:[0]},
+        {input:[17,5,1,13,1],output:[0]},
+        {input:[19,4,1,14,1],output:[0]},
+        {input:[19,0,1,10,1],output:[0]},
+        {input:[20,1,1,11,1],output:[0]},
+        {input:[17,3,1,8,1],output:[0]},
+        {input:[19,8,1,13,1],output:[0]},
+        {input:[17,4,1,14,1],output:[0]},
+        {input:[17,6,1,11,1],output:[0]},
+        {input:[16,5,1,8,1],output:[0]},
+        {input:[19,7,1,13,1],output:[0]},
+        {input:[20,9,1,12,1],output:[0]},
+        {input:[20,6,1,10,1],output:[0]},
+        {input:[17,6,1,14,1],output:[0]},
+        {input:[20,10,1,8,1],output:[0]},
+        {input:[20,2,1,8,1],output:[0]},
+        {input:[15,10,1,11,1],output:[0]},
+        {input:[19,6,1,11,1],output:[0]},
+        {input:[19,4,1,14,1],output:[0]},
+        {input:[15,9,1,9,1],output:[0]},
+        {input:[18,2,1,10,1],output:[0]},
+        {input:[16,3,1,13,1],output:[0]},
+        {input:[16,8,1,11,1],output:[0]},
+        {input:[16,2,1,12,1],output:[0]},
+        {input:[20,2,1,8,1],output:[0]},
+        {input:[19,6,1,9,1],output:[0]},
+        {input:[16,5,1,13,1],output:[0]},
+        {input:[20,3,1,11,1],output:[0]},
+        {input:[18,10,1,14,1],output:[0]},
+        {input:[19,3,1,14,1],output:[0]},
+        {input:[17,0,1,14,1],output:[0]},
+        {input:[20,4,1,9,1],output:[0]},
+        {input:[31,7,0,10,3],output:[1]},
+        {input:[30,10,1,14,1],output:[1]},
+        {input:[25,4,0,10,1],output:[1]},
+        {input:[26,8,1,11,3],output:[1]},
+        {input:[31,3,0,14,2],output:[1]},
+        {input:[28,0,1,13,1],output:[1]},
+        {input:[25,3,0,13,4],output:[1]},
+        {input:[33,5,1,10,1],output:[1]},
+        {input:[37,0,0,8,1],output:[1]},
+        {input:[30,4,1,10,3],output:[1]},
+        {input:[39,8,0,12,1],output:[1]},
+        {input:[37,10,1,11,1],output:[1]},
+        {input:[36,9,1,13,2],output:[1]},
+        {input:[33,1,0,10,3],output:[1]},
+        {input:[26,4,1,12,4],output:[1]},
+        {input:[27,4,0,14,2],output:[1]},
+        {input:[30,3,1,8,3],output:[1]},
+        {input:[30,5,0,13,4],output:[1]},
+        {input:[40,6,1,14,1],output:[1]},
+        {input:[38,9,0,11,4],output:[1]},
+        {input:[38,1,1,11,3],output:[1]},
+        {input:[40,0,0,11,1],output:[1]},
+        {input:[39,9,1,11,3],output:[1]},
+        {input:[38,4,0,8,1],output:[1]},
+        
+        
 
-    guardar(){
-      /*
-      db.collection("tension").doc("Cp1EZMP8tdMUpG0AZBTZ").set({
-        valor1:this.valorslidermenor,
-        valor2:this.valorslider,
-      })
-      .then(() => {
-          console.log("Datos guardados");
-      })
-      .catch((error) => {
-          console.error("Error writing document: ", error);
-      });*/
+        
+    ])
+
+        this.client.on('connect', ()=>{
+        console.log('conectado')
+        this.client.subscribe('oriolport/01',(err)=> {
+            if (!err) {
+            this.client.publish('oriolport/02', '0')
+            }
+        })
+        })
+        this.client.on('message',(topic, message)=>{
+            // message is Buffer
+            if(topic=='oriolport/01' && this.sistema){
+                //console.log(message.toString())
+                let js=message.toString();
+                let cadena=JSON.parse(js);
+                //console.log(cadena)
+                this.humedad=cadena.hume;
+                this.lluvia=cadena.lluvia?0:1;
+                this.temperatura=cadena.temp;
+                this.tiempo=cadena.hora;
+               // this.estado_motor=1;
+               // console.log(this.lluvia)
+                if(this.count==4){
+                    this.count=0;
+                    this.ejecutor();
+                }
+                this.count++;
+            }else{
+                this.humedad=0;
+                this.lluvia=0;
+                this.temperatura=0;
+                this.estado_motor=0;
+            }
+
+            //setInterval(this.ejecutor(),5000)
+        })
+
+
+},methods:{
+    prenderled(){
+        let l=this.led?'1':'0';
+          this.client.publish('oriolport/02', 'e'+l)
     },
-     
-    
-    botonOn(){
-      this.estado_boton = '1'; 
-      console.log("Led is ON")
-      this.enviarDato()
-      //this.audio.play();
-    },
-    botonOff(){
-      this.estado_boton = '0';
-      console.log("Led is OFF")
-      this.enviarDato()
-    },
-    enviarDato(){
-      this.publish.payload=this.estado_boton;
-      const { topic, qos, payload } = this.publish;
-      this.client.publish(topic, payload, qos, error => {
-        if (error) {
-          console.log('Publish error', error)
+    estado_sistema(){
+        let s=this.sistema?'1':'0';
+        if(s=='0'){
+          this.client.publish('oriolport/02', 'm0')
         }
-      })
-      //var led_estado = '{"tipo":"led","Led" :'+this.estado_boton+'}'
-      // this.connection.send(led_estado)
     },
-    enviarlimite(){
-      if(!isNaN(this.limite)){ 
-        console.log(this.limite);
-        var limite1='{"tipo":"limite","limite1" :'+this.limite+'}';
-       // this.connection.send(limite1);
-      }
-
-    },
-    prendermotor(){
-      this.estado_motor=1;
-      var motor='{"tipo":"motor","motor" :'+1+'}';;
-      //this.connection.send(motor);
-    },
-    apagarmotor(){
-      this.valorslider=1;
-      this.valorslidermenor=0;
-      this.estado_motor=0;
-      var motor='{"tipo":"motor","motor" :'+0+'}';;
-     // this.connection.send(motor);
+ 
+    obtenerhora(){
+        this.hora=Math.round(this.tiempo/170);
+        //let hor=Math.round(this.tiempo/24);
+        let rangmin=Math.round(this.tiempo%170);
+        let min=Math.round((rangmin*60)/170)
+        this.minutos=min;
     }
+    ,
+    prender_motor(){
+        let s=this.estado_motor?'1':'0';
+        this.client.publish('oriolport/02', 'm'+s)
+    },
+    cambiarestacion(es){
+        switch(es){
+            case 1:
+                this.nombreest='Verano';
+                this.estacion=1;
+                break;
+            case 2:
+                this.nombreest='Invierno';
+                this.estacion=2;
+                break;
+            case 3:
+                this.nombreest='Otoño';
+                this.estacion=3;
+                break;
+            case 4:
+                this.nombreest='Primavera';
+                this.estacion=4;
+                break;
+            default :
+                break;
+        }
+    },
+    ejecutor(){
+            this.datos.humedad=Math.round((((1300-this.humedad)/1400)*100));
+            this.datos.temperatura= Math.round(this.temperatura/100);
+            this.datos.hora=Math.round(this.tiempo/170);
+            this.datos.estacion=this.estacion;
+            this.datos.lluvia=this.lluvia;
+            console.log(this.datos);
+            console.log([this.datos.temperatura,this.datos.humedad,this.datos.lluvia,this.datos.hora,this.datos.estacion])
+            var ejec=this.net.run([this.datos.temperatura,this.datos.humedad,this.datos.lluvia,this.datos.hora,this.datos.estacion]);
+            console.log(ejec[0]);
 
+            var motor=Math.round(ejec[0]);
+            console.log(motor)
+            this.estado_motor=motor;
+            this.client.publish('oriolport/02', 'm'+motor)
+        
+    }
+}
 
-  }
 });
 
 
