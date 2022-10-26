@@ -33,8 +33,8 @@ int hora;
 
 char msg[MSG_BUFFER_SIZE];
 Ticker timer;
-const char* ssid     = "Eduardo";
-const char* password = "123456789";
+const char* ssid     = "Sistemas Undac";
+const char* password = "S1st3m4sUNDAC";
 
 const char* mqtt_server ="broker.emqx.io";
 const int mqtt_port = 1883;

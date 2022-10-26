@@ -8,264 +8,323 @@
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Sensores</title>
 </head>
 <body>
     <div id="app">
         <v-app>
-            <v-main>
-                <div class="fondo">
-                    <v-card class="transparent" elevation="0">
-                        <v-card-title style="color:#bdc2c5; font-size:30px" >
-                        <v-icon style="color:#bdc2c5; font-size:30px" dark class="mr-2" @click="dialog=true">mdi-view-dashboard</v-icon> Control de Sensores
-                        <v-menu 
-                            transition="slide-x-transition"
-                            bottom
-                            right
-                            v-model="dialog"
-                            
-                            :close-on-content-click="false"
-                            
-                            >
-                            <v-list width="350" style="background:#031119" dark>
-                                <v-list-item>
+            <v-main style="background:#030e16">
+                <template v-if="cargar">
+                   
+                    <div class="fondo">
+                        <v-card class="transparent" elevation="0">
+                            <v-card-title style="color:#bdc2c5; font-size:30px" >
+                            <v-icon style="color:#bdc2c5; font-size:30px" dark class="mr-2" @click="dialog=true">mdi-view-dashboard</v-icon> Control de Sensores
+                            <v-menu 
+                                transition="slide-x-transition"
+                                bottom
+                                right
+                                v-model="dialog"
+                                
+                                :close-on-content-click="false"
+                                
+                                >
+                                <v-list width="350" style="background:#031119" dark>
+                                    <v-list-item>
+                                        <v-list-item-title>
+                                            Controles del sistema
+                                        </v-list-item-title>
+                                    </v-list-item>
+                        
+                                    <v-list-item
+                        
+                                    >
                                     <v-list-item-title>
-                                        Controles del sistema
+                                        <v-icon>mdi-cog-off</v-icon>Sistema  
+                                        
                                     </v-list-item-title>
-                                </v-list-item>
+                                    <v-switch v-model="sistema" @click="estado_sistema()" class="ml-4" color="#03fda1"></v-switch>
+                                    </v-list-item>
                     
-                                <v-list-item
+                                    <v-list-item
+                                    >
+                                    <v-list-item-title>
+                                        <v-icon>mdi-led-on</v-icon> Led
+                                    </v-list-item-title>
+                                        <v-switch v-model="led" @click="prenderled()" class="ml-4"  color="#01c4ff"></v-switch>
+                                    </v-list-item>
                     
-                                >
-                                <v-list-item-title>
-                                    <v-icon>mdi-cog-off</v-icon>Sistema  
-                                    
-                                </v-list-item-title>
-                                <v-switch v-model="sistema" @click="estado_sistema()" class="ml-4" color="#03fda1"></v-switch>
-                                </v-list-item>
-                
-                                <v-list-item
-                                >
-                                <v-list-item-title>
-                                    <v-icon>mdi-led-on</v-icon> Led
-                                </v-list-item-title>
-                                    <v-switch v-model="led" @click="prenderled()" class="ml-4"  color="#01c4ff"></v-switch>
-                                </v-list-item>
-                
-                                <v-list-item
-                                >
-                                <v-list-item-title>
-                                    <v-icon>mdi-led-on</v-icon> Motor
-                                </v-list-item-title>
-                                    <v-switch v-model="estado_motor" @click="prender_motor()" class="ml-4"  color="#01c4ff"></v-switch>
-                                </v-list-item>
-                
-                            </v-list>
-                            </v-menu> 
-                        </v-card-title>
-                    </v-card>
-                    <v-card class="mx-3 mt-2 transparent" elevation="0" >
-                        <v-row>
-                            <v-col cols="12" sm="4">
-                                <v-card class="transparent card1" >
-                                    <v-card-title class="colorletra" style="position:relative; width:100%;">
-                                        Temperatura Ambiente
-                                        <v-icon dark style="position:absolute; right:0;  top:5px" size="70" color="#f9f82dfc">mdi-thermometer</v-icon>
-                                    </v-card-title>
-                                    <v-card elevation="0" class="transparent d-flex" height="240" >
-                                        <strong style="color:#e9701afc" class="color_numero">{{temp}}°C</strong>   
-                                    </v-card>
-                                </v-card>
-                            </v-col>
-                            <v-col cols="12" sm="4">
-                                <v-card class="transparent card1"  >
-                                    <v-card-title class="colorletra" style="position:relative; width:100%;">
-                                        Humedad de suelo
-                                        <v-icon dark style="position:absolute; right:0;  top:5px" size="70" color="#2df997fc">
-                                            mdi-water-outline
-                                        </v-icon>
-                                    </v-card-title>
-                                        <v-card elevation="0" class="transparent d-flex" height="240">
-                                                <v-progress-circular :value="hume" size="220" class="mx-auto mb-4" color="rgba(38, 233, 139, 0.625) ">
-                                                <strong color="rgba(38, 233, 139, 0.625)" style="font-size:55px">{{hume}} %</strong>
-                                            </v-progress-circular>
+                                    <v-list-item
+                                    >
+                                    <v-list-item-title>
+                                        <v-icon>mdi-led-on</v-icon> Motor
+                                    </v-list-item-title>
+                                        <v-switch v-model="estado_motor" @click="prender_motor()" class="ml-4"  color="#01c4ff"></v-switch>
+                                    </v-list-item>
+                    
+                                </v-list>
+                                </v-menu> 
+                            </v-card-title>
+                        </v-card>
+                        <v-card class="mx-3 mt-2 transparent" elevation="0" >
+                            <v-row>
+                                <v-col cols="12" sm="4">
+                                    <v-card class="transparent card1" >
+                                        <v-card-title class="colorletra" style="position:relative; width:100%;">
+                                            Temperatura Ambiente
+                                            <v-icon dark style="position:absolute; right:0;  top:5px" size="70" color="#f9f82dfc">mdi-thermometer</v-icon>
+                                        </v-card-title>
+                                        <v-card elevation="0" class="transparent d-flex" height="240" >
+                                            <strong style="color:#e9701afc" class="color_numero">{{temp}}°C</strong>   
                                         </v-card>
-                                </v-card>
-                            </v-col>
-                            <v-col cols="12" sm="4">
-                                <v-card class="transparent card1"  >
-                                    <v-card-title class="colorletra" style="position:relative; width:100%;">
-                                        Lluvia
-                                    </v-card-title>
-                                        <v-card elevation="0" class="transparent d-flex" height="240">   
-                                            <div class="mx-auto">
-                                                <v-icon dark class="my-auto mx-auto" size="150" color="#1cc3c3">
-                                                    mdi-cloud-outline
-                                                </v-icon >
-                                                <div v-if="lluvia" style="text-align: center;">
-                                                    <v-icon  dark  size="50" color="#1cc3c3" style="animation: nieve1 1.5s ease-in-out infinite;">
-                                                        mdi-water
-                                                    </v-icon>
-                                                    <v-icon  dark  size="50" class="mt-7"  color="#1cc3c3" style="animation: nieve2 1.5s ease-in-out infinite;">
-                                                        mdi-water
-                                                    </v-icon>
-                                                    <v-icon  dark  size="50" color="#1cc3c3" style="animation: nieve3 1.5s ease-in-out infinite;">
-                                                        mdi-water
-                                                    </v-icon>
-                                                </div>
-                                            </div> 
-                                            
-                                            
-                                        </v-card>
-                                </v-card>
-                            </v-col>
-                            <v-col cols="12" sm="5">
-                                <v-card class="mb-3 card2" >
-                                    <v-card-title class="colorletra" style="position:relative; width:100%;">
-                                        Hora  {{hor}}
-                                        <v-icon dark style="position:absolute; right:0;  top:5px" size="70" color="#ef476f">mdi-clock</v-icon>
-                                    </v-card-title>
-                                    <v-card elevation="0" class="transparent d-flex" height="140" >
-                                        <div class="container">
-                                            <div class="reloj">
-                                                {{hora}}:{{minutos}} {{hora>=12?'PM':'AM'}}
-                                            </div>
-                                        </div>   
                                     </v-card>
-                                </v-card>
-                                <v-card class=" card3" >
-                                    <v-card-title class="colorletra" style="position:relative; width:100%;">
-                                        Estación
-                                    </v-card-title>
-                                    <v-card elevation="0" class="transparent d-flex" height="140" >
-                                        <div class="estacion">
-                                            <div >
-                                                <div v-if="estacion==1" class="verano" style="animation: rotation 3.5s infinite linear;">
-                                                    <v-icon dark style="right:0;  top:5px" size="130" color="#fff76e"> mdi-white-balance-sunny</v-icon>  
-                                                </div>
-                                                <div v-else-if="estacion==2" class="invierno" style="animation: nieve 2s ease-in-out infinite;">
-                                                    <v-icon dark style="right:0;  top:5px" size="130" color="#118ab2">mdi-snowflake</v-icon>
+                                </v-col>
+                                <v-col cols="12" sm="4">
+                                    <v-card class="transparent card1"  >
+                                        <v-card-title class="colorletra" style="position:relative; width:100%;">
+                                            Humedad de suelo
+                                            <v-icon dark style="position:absolute; right:0;  top:5px" size="70" color="#2df997fc">
+                                                mdi-water-outline
+                                            </v-icon>
+                                        </v-card-title>
+                                            <v-card elevation="0" class="transparent d-flex" height="240">
+                                                    <v-progress-circular :value="hume" size="220" class="mx-auto mb-4" color="rgba(38, 233, 139, 0.625) ">
+                                                    <strong color="rgba(38, 233, 139, 0.625)" style="font-size:55px">{{hume}} %</strong>
+                                                </v-progress-circular>
+                                            </v-card>
+                                    </v-card>
+                                </v-col>
+                                <v-col cols="12" sm="4">
+                                    <v-card class="transparent card1"  >
+                                        <v-card-title class="colorletra" style="position:relative; width:100%;">
+                                            Lluvia
+                                        </v-card-title>
+                                            <v-card elevation="0" class="transparent d-flex" height="240">   
+                                                <div class="mx-auto">
+                                                    <v-icon dark class="my-auto mx-auto" size="150" color="#1cc3c3">
+                                                        mdi-cloud-outline
+                                                    </v-icon >
+                                                    <div v-if="lluvia" style="text-align: center;">
+                                                        <v-icon  dark  size="50" color="#1cc3c3" style="animation: nieve1 1.5s ease-in-out infinite;">
+                                                            mdi-water
+                                                        </v-icon>
+                                                        <v-icon  dark  size="50" class="mt-7"  color="#1cc3c3" style="animation: nieve2 1.5s ease-in-out infinite;">
+                                                            mdi-water
+                                                        </v-icon>
+                                                        <v-icon  dark  size="50" color="#1cc3c3" style="animation: nieve3 1.5s ease-in-out infinite;">
+                                                            mdi-water
+                                                        </v-icon>
+                                                    </div>
                                                 </div> 
-                                                <div v-else-if="estacion==4" class="primavera" style="">
-                                                    <v-icon dark style="right:0;  top:5px" size="130" color="#ef476f">mdi-flower</v-icon>
-                                                    
+                                                
+                                                
+                                            </v-card>
+                                    </v-card>
+                                </v-col>
+                                <v-col cols="12" sm="5">
+                                    <v-card class="mb-3 card2" >
+                                        <v-card-title class="colorletra" style="position:relative; width:100%;">
+                                            Hora  {{hor}}
+                                            <v-icon dark style="position:absolute; right:0;  top:5px" size="70" color="#ef476f">mdi-clock</v-icon>
+                                        </v-card-title>
+                                        <v-card elevation="0" class="transparent d-flex" height="140" >
+                                            <div class="container">
+                                                <div class="reloj">
+                                                    {{hora}}:{{minutos}} {{hora>=12?'PM':'AM'}}
                                                 </div>
-                                                <div v-else-if="estacion==3" class="otoño" style="animation: otoño 3s ease-in-out infinite;">
-                                                    <v-icon dark style="right:0;  top:5px" size="130" color="#e9701afc">mdi-seed</v-icon>
+                                            </div>   
+                                        </v-card>
+                                    </v-card>
+                                    <v-card class=" card3" >
+                                        <v-card-title class="colorletra" style="position:relative; width:100%;">
+                                            Estación
+                                        </v-card-title>
+                                        <v-card elevation="0" class="transparent d-flex" height="140" >
+                                            <div class="estacion">
+                                                <div >
+                                                    <div v-if="estacion==1" class="verano" style="animation: rotation 3.5s infinite linear;">
+                                                        <v-icon dark style="right:0;  top:5px" size="130" color="#fff76e"> mdi-white-balance-sunny</v-icon>  
+                                                    </div>
+                                                    <div v-else-if="estacion==2" class="invierno" style="animation: nieve 2s ease-in-out infinite;">
+                                                        <v-icon dark style="right:0;  top:5px" size="130" color="#118ab2">mdi-snowflake</v-icon>
+                                                    </div> 
+                                                    <div v-else-if="estacion==4" class="primavera">
+                                                        <v-icon dark style="right:0;  top:5px" size="130" color="#ef476f">mdi-flower</v-icon>
+                                                        
+                                                    </div>
+                                                    <div v-else-if="estacion==3" class="otoño" style="animation: otoño 3s ease-in-out infinite;">
+                                                        <v-icon dark style="right:0;  top:5px" size="130" color="#e9701afc">mdi-seed</v-icon>
+                                                        
+                                                    </div>
                                                     
                                                 </div>
                                                 
-                                            </div>
-                                            
-                                        </div>  
-                                            <div class="date">
-                                                <div class="mb-3">
-                                                <v-chip color="#fff76e" small @click="cambiarestacion(1)">
-                                                    Verano
-                                                </v-chip>
-                                                <v-chip class="ml-1" color="#118ab2" small @click="cambiarestacion(2)" >Invierno</v-chip>
-                                                <v-chip class="ml-1" color="#e9701afc" small @click="cambiarestacion(3)" >Otoño</v-chip>
-                                                <v-chip class="ml-1" color="#ef476f" small @click="cambiarestacion(4)" >Primavera</v-chip>
+                                            </div>  
+                                                <div class="date">
+                                                    <div class="mb-3">
+                                                    <v-chip color="#fff76e" small @click="cambiarestacion(1)">
+                                                        Verano
+                                                    </v-chip>
+                                                    <v-chip class="ml-1" color="#118ab2" small @click="cambiarestacion(2)" >Invierno</v-chip>
+                                                    <v-chip class="ml-1" color="#e9701afc" small @click="cambiarestacion(3)" >Otoño</v-chip>
+                                                    <v-chip class="ml-1" color="#ef476f" small @click="cambiarestacion(4)" >Primavera</v-chip>
+                                                    </div>
+                                                    {{nombreest}}
                                                 </div>
-                                                {{nombreest}}
-                                            </div>
+                                        </v-card>
                                     </v-card>
-                                </v-card>
-                            </v-col>
-                            
-                            <v-col cols="2" >
-                                    <strong style="color:#fff;">Resumen de datos</strong> 
-                                    <v-alert
-                                    
-                                    class="mt-4"
-                                    border="bottom"
-                                    color="#e9701afc"
-                                    dense
-                                    loading
-                                    style="color:#fff !important; max-width: 150px !important;"
-                                    >
-                                    Temperatura {{temp}}°C
-                                    <v-progress-linear
-                                    v-if="sistema"
-                                    indeterminate
-                                    color="white"
-                                    ></v-progress-linear>
-                                    </v-alert>
-                                    <v-alert
-                                    border="bottom"
-                                    color="#2df997fc"
-                                    dense
-                                    style="color:#fff !important; max-width: 150px !important;"
-                                    >
-                                    Humedad {{humedad}}%
-                                    <v-progress-linear
-                                    v-if="sistema"
-                                    indeterminate
-                                    color="white"
-                                    ></v-progress-linear>
-                                    </v-alert>
-                                    <v-alert
-                                    border="bottom"
-                                    color="#1cc3c3"
-                                    dense
-                                    style="color:#fff !important; max-width: 150px !important;"
-                                    >
-                                    {{lluvia?'Con':'Sin'}} lluvia
-                                    <v-progress-linear
-                                    v-if="sistema"
-                                    indeterminate
-                                    color="white"
-                                    ></v-progress-linear>
-                                    </v-alert>
-                                    <v-alert
-                                    border="bottom"
-                                    color="#ef476f"
-                                    dense
-                                    style="color:#fff !important; max-width: 150px !important;"
-                                    >
-                                        Hora <br>
-                                    {{hora}}:{{minutos}} pm
+                                </v-col>
+                                
+                                <v-col cols="2" >
+                                        <strong style="color:#fff;">Resumen de datos</strong> 
+                                        <v-alert
+                                        
+                                        class="mt-4"
+                                        border="bottom"
+                                        color="#e9701afc"
+                                        dense
+                                        loading
+                                        style="color:#fff !important; max-width: 150px !important;"
+                                        >
+                                        Temperatura {{temp}}°C
                                         <v-progress-linear
                                         v-if="sistema"
-                                    indeterminate
-                                    color="white"
-                                    ></v-progress-linear>
-                                    </v-alert>
-                                    <v-alert
-                                    border="bottom"
-                                    color="purple"
-                                    dense
-                                    style="color:#fff !important; max-width: 150px !important;"
-                                    >
-                                    {{nombreest}}
+                                        indeterminate
+                                        color="white"
+                                        ></v-progress-linear>
+                                        </v-alert>
+                                        <v-alert
+                                        border="bottom"
+                                        color="#2df997fc"
+                                        dense
+                                        style="color:#fff !important; max-width: 150px !important;"
+                                        >
+                                        Humedad <br> {{hume}}%
                                         <v-progress-linear
-                                    v-if="sistema"
-                                    indeterminate
-                                    color="white"
-                                    ></v-progress-linear>
-                                    </v-alert>
-                            </v-col>
+                                        v-if="sistema"
+                                        indeterminate
+                                        color="white"
+                                        ></v-progress-linear>
+                                        </v-alert>
+                                        <v-alert
+                                        border="bottom"
+                                        color="#1cc3c3"
+                                        dense
+                                        style="color:#fff !important; max-width: 150px !important;"
+                                        >
+                                        {{lluvia?'Con':'Sin'}} lluvia
+                                        <v-progress-linear
+                                        v-if="sistema"
+                                        indeterminate
+                                        color="white"
+                                        ></v-progress-linear>
+                                        </v-alert>
+                                        <v-alert
+                                        border="bottom"
+                                        color="#ef476f"
+                                        dense
+                                        style="color:#fff !important; max-width: 150px !important;"
+                                        >
+                                            Hora <br>
+                                        {{hora}}:{{minutos}} pm
+                                            <v-progress-linear
+                                            v-if="sistema"
+                                        indeterminate
+                                        color="white"
+                                        ></v-progress-linear>
+                                        </v-alert>
+                                        <v-alert
+                                        border="bottom"
+                                        color="purple"
+                                        dense
+                                        style="color:#fff !important; max-width: 150px !important;"
+                                        >
+                                        {{nombreest}}
+                                            <v-progress-linear
+                                        v-if="sistema"
+                                        indeterminate
+                                        color="white"
+                                        ></v-progress-linear>
+                                        </v-alert>
+                                </v-col>
 
-                            <v-col cols="12" sm="5">
-                                <v-card class="transparent">
-                                    <div 
-                                    class="ma-auto contenedorimg"
-                                    >
-                                    <img
-                                    v-bind:style="estado_motor==1?'animation: rotation 1s infinite linear;':''"
-                                    src="https://icones.pro/wp-content/uploads/2022/02/services-parametres-et-icone-d-engrenage-orange.png" alt="">
-                                    </div>
-                                </v-card>
-                            </v-col>
+                                <v-col cols="12" sm="5" class="my-auto">
+                                    <v-card class="transparent" elevation="0">
+                                        <div 
+                                        class="ma-auto contenedorimg"
+                                        >
+                                        <img
+                                        v-bind:style="estado_motor==1?'animation: rotation 1s infinite linear;':''"
+                                        src="https://icones.pro/wp-content/uploads/2022/02/services-parametres-et-icone-d-engrenage-orange.png" alt="">
+                                        </div>
+                                    </v-card>
+                                </v-col>
+                                
+                                </v-row>
+                        </v-card>
+                    </div>
+                    <template>
+                        <v-footer
+                        dark
+                        padless 
+                        class="mt-5"
+                        >
+                        <v-card
+                            class="flex"
+                            flat
+                            tile
+                            dense
+                        >
+                            <v-card-title class="teal py-1">
+                            <strong class="subheading " >Control de sensores para un sistema de riego automático</strong>
+                    
+                            <v-spacer></v-spacer>
+                    
+                            <v-btn
+                                class="mr-8 text-capitalize"
+                                dark
+                                icon
+                            >
+                            <a href="https://oriolsimon.netlify.app/" target="_blank" style="text-decoration:none; color: #fff;">Contacto</a>
+                            </v-btn>
+                            </v-card-title>
+                    
+                            <v-card-text class="py-2 white--text text-center" style="background-color:#030e16 ;">
+                            derechos de autor reservados  <strong>@OriolCorp - </strong>{{ new Date().getFullYear() }}
+                            </v-card-text>
+                        </v-card>
+                        </v-footer>
+                    </template>                   
+                </template>
+                <template v-else>
+                    <div class="divcarga">
+                        <div class="estrella uno"></div>
+                            <div class="estrella dos"></div>
+                            <div class="estrella tres"></div>
+                            <div class="estrella cuatro"></div>
+                            <div class="estrella cinco"></div>
+                            <div class="estrella seis"></div>
+                            <div class="estrella siete"></div>
+                            <div class="estrella ocho"></div>
+                            <div class="estrella nueve"></div>
+                            <div class="estrella diez"></div>
+                            <div class="estrella once"></div>
+                            <div class="estrella doce"></div>
                             
-                        </v-row>
-                    </v-card>
-                </div>
+                            <div class="nubes">
+                                <img src="img/nubes-removebg-preview.png" alt="Nubes" class="imgnub">
+                                <div class="mapa"></div>
+                                <img src="img/luna2-removebg-preview.png" alt="luna" class="luna">
+
+                            </div>
+
+                    </div>
+                </template>
             </v-main>
         </v-app>
     </div>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-    <script src="//unpkg.com/brain.js"></script>
+    <script src="js/mqtt.js"></script>
+    <script src="js/brain.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script src="main.js"></script>
@@ -279,7 +338,6 @@
 }
 .fondo{
     background: #030e16;
-    height: 100%;
     font-family: 'Open Sans';
     font-weight: 700;
 }
@@ -357,7 +415,7 @@
 
 .contenedorimg img{
   max-height: 50%;
-  max-width: 70%;
+  max-width: 50%;
  
 }
 .rotate {
@@ -422,6 +480,142 @@
         transform: translateY(0px);
     }
 }
+
+    .divcarga{
+        background: -webkit-radial-gradient(#233d48, #1c3239, #030e16);
+        text-align: center;
+    }
+
+    .nubes, .mapa{
+        position: absolute;
+        top:0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+    }
+
+    .nubes, .imgnub{
+        height: 280px;
+        width: 330px;
+    }
+
+    .nubes img{
+        position: relative;
+        
+    }
+    .imgnub{
+        animation: nubes 5s ease-in-out infinite;
+        z-index: 100;
+
+    }
+    .luna{
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        bottom: 70%;
+        right: 50%;
+        animation: luna 10s linear infinite;
+        transform-origin: 200px 50px;
+    }
+
+    .mapa{
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        box-shadow: -30px -20px 0 0 rgba(0,0,0,.15) inset,
+                    -70px -40px 0 0 rgba(0,0,0,.1) inset,
+                    5px 5px 0 0 rgba(255,255,255,.2) inset;
+        background: url(img/mapan.png);
+        background-size: cover;
+        -webkit-animation: rotacion 7s infinite linear;
+    }
+
+    .estrella{
+        background: white;
+        width: 4px;
+        height: 4px;
+        position: absolute;
+        border-radius: 50%;
+        /* -webkit-animation: traslation 5s infinite linear; */
+        
+    }
+
+    .uno{
+        top: 50%;
+        left: 30%;
+    }
+
+    .dos{
+        top: 30%;
+        right: 30%;
+    }
+    .tres{
+        bottom: 20%;
+        right: 50%;
+    }
+    .cuatro{
+        bottom: 30%;
+        left: 10%;
+    }
+    .cinco{
+        bottom: 30%;
+        right: 20%;
+    }
+    .seis{
+        top: 10%;
+        right: 56%;
+    }
+    .siete{
+        bottom: 12%;
+        left:70%;
+    }
+    .ocho{
+        top: 15%;
+        left: 20%;    
+    }
+    .nueve{
+        top: 10%;
+        right: 15%;    
+    }
+    .diez{
+        top: 40%;
+        left: 10%;    
+    }
+    .once{
+        top: 40%;
+        right: 10%;    
+    }
+    .doce{
+        bottom: 20%;
+        left: 25%;    
+    }
+    @-webkit-keyframes rotacion {
+        from{
+            background-position: left center    ;
+        }to{
+            background-position: -480px center;
+        }
+    }
+
+    @keyframes nubes{
+      50%{
+          transform: translateY(-30px);
+      }100%{
+          transform: translateY(0px);
+      }
+    }
+
+    @keyframes luna{
+        from{
+            transform: rotateZ(0deg);
+        }to{
+            transform: rotateZ(360deg);
+        }
+    }
+
+
+
     </style>
 </body>
 </html>

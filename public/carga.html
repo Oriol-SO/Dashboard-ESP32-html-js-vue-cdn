@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carga</title>
+</head>
+<body>
+
+    <div class="estrella uno"></div>
+    <div class="estrella dos"></div>
+    <div class="estrella tres"></div>
+    <div class="estrella cuatro"></div>
+    <div class="estrella cinco"></div>
+    <div class="estrella seis"></div>
+    <div class="estrella siete"></div>
+    <div class="estrella ocho"></div>
+    <div class="estrella nueve"></div>
+    <div class="estrella diez"></div>
+    <div class="estrella once"></div>
+    <div class="estrella doce"></div>
+    
+    <div class="nubes">
+        <img src="img/nubes-removebg-preview.png" alt="Nubes" class="imgnub">
+        <div class="mapa"></div>
+        <img src="img/luna2-removebg-preview.png" alt="luna" class="luna">
+
+    </div>
+</body>
+<style>
+
+    body, html{
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    body{
+        background: -webkit-radial-gradient(#233d48, #1c3239, #030e16);
+        text-align: center;
+    }
+
+    .nubes, .mapa{
+        position: absolute;
+        top:0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+    }
+
+    .nubes, .imgnub{
+        height: 280px;
+        width: 330px;
+    }
+
+    .nubes img{
+        position: relative;
+        
+    }
+    .imgnub{
+        animation: nubes 5s ease-in-out infinite;
+        z-index: 100;
+
+    }
+    .luna{
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        bottom: 70%;
+        right: 50%;
+        animation: luna 10s linear infinite;
+        transform-origin: 200px 50px;
+    }
+
+    .mapa{
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        box-shadow: -30px -20px 0 0 rgba(0,0,0,.15) inset,
+                    -70px -40px 0 0 rgba(0,0,0,.1) inset,
+                    5px 5px 0 0 rgba(255,255,255,.2) inset;
+        background: url(img/mapan.png);
+        background-size: cover;
+        -webkit-animation: rotacion 7s infinite linear;
+    }
+
+    .estrella{
+        background: white;
+        width: 4px;
+        height: 4px;
+        position: absolute;
+        border-radius: 50%;
+        /* -webkit-animation: traslation 5s infinite linear; */
+        
+    }
+
+    .uno{
+        top: 50%;
+        left: 30%;
+    }
+
+    .dos{
+        top: 30%;
+        right: 30%;
+    }
+    .tres{
+        bottom: 20%;
+        right: 50%;
+    }
+    .cuatro{
+        bottom: 30%;
+        left: 10%;
+    }
+    .cinco{
+        bottom: 30%;
+        right: 20%;
+    }
+    .seis{
+        top: 10%;
+        right: 56%;
+    }
+    .siete{
+        bottom: 12%;
+        left:70%;
+    }
+    .ocho{
+        top: 15%;
+        left: 20%;    
+    }
+    .nueve{
+        top: 10%;
+        right: 15%;    
+    }
+    .diez{
+        top: 40%;
+        left: 10%;    
+    }
+    .once{
+        top: 40%;
+        right: 10%;    
+    }
+    .doce{
+        bottom: 20%;
+        left: 25%;    
+    }
+    @-webkit-keyframes rotacion {
+        from{
+            background-position: left center    ;
+        }to{
+            background-position: -480px center;
+        }
+    }
+
+    @keyframes nubes{
+      50%{
+          transform: translateY(-30px);
+      }100%{
+          transform: translateY(0px);
+      }
+    }
+
+    @keyframes luna{
+        from{
+            transform: rotateZ(0deg);
+        }to{
+            transform: rotateZ(360deg);
+        }
+    }
+    /* @keyframes traslation{
+        from{
+            ;
+        }to{
+            right: 0px;
+        }
+    } */
+
+</style>
+</html>
