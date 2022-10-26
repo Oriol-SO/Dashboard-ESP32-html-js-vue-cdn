@@ -298,26 +298,29 @@
                 </template>
                 <template v-else>
                     <div class="divcarga">
+                        <div class="title">
+                            <h3> Conectando Microcontroladores </h3>
+                        </div>
+                    
                         <div class="estrella uno"></div>
-                            <div class="estrella dos"></div>
-                            <div class="estrella tres"></div>
-                            <div class="estrella cuatro"></div>
-                            <div class="estrella cinco"></div>
-                            <div class="estrella seis"></div>
-                            <div class="estrella siete"></div>
-                            <div class="estrella ocho"></div>
-                            <div class="estrella nueve"></div>
-                            <div class="estrella diez"></div>
-                            <div class="estrella once"></div>
-                            <div class="estrella doce"></div>
-                            
-                            <div class="nubes">
-                                <img src="img/nubes-removebg-preview.png" alt="Nubes" class="imgnub">
-                                <div class="mapa"></div>
-                                <img src="img/luna2-removebg-preview.png" alt="luna" class="luna">
-
-                            </div>
-
+                        <div class="estrella dos"></div>
+                        <div class="estrella tres"></div>
+                        <div class="estrella cuatro"></div>
+                        <div class="estrella cinco"></div>
+                        <div class="estrella seis"></div>
+                        <div class="estrella siete"></div>
+                        <div class="estrella ocho"></div>
+                        <div class="estrella nueve"></div>
+                        <div class="estrella diez"></div>
+                        <div class="estrella once"></div>
+                        <div class="estrella doce"></div>
+                        
+                        <div class="nubes">
+                            <img src="img/nubes-removebg-preview.png" alt="Nubes" class="imgnub">
+                            <div class="mapa"></div>
+                            <img src="img/satelite.png" alt="luna" class="luna">
+                    
+                        </div>
                     </div>
                 </template>
             </v-main>
@@ -505,17 +508,19 @@
         
     }
     .imgnub{
+        top: 9%;
         animation: nubes 5s ease-in-out infinite;
         z-index: 100;
 
     }
     .luna{
         position: absolute;
-        width: 70px;
-        height: 70px;
+        width: 75px;
+        height: 75px;
         bottom: 70%;
         right: 50%;
         animation: luna 10s linear infinite;
+        transform: rotate(-20deg);
         transform-origin: 200px 50px;
     }
 
@@ -539,6 +544,14 @@
         border-radius: 50%;
         /* -webkit-animation: traslation 5s infinite linear; */
         
+    }
+
+    .title{
+        position: relative;
+        font-family: 'Open Sans';
+        font-size: 25px;
+        color: white;
+        top: 10%;
     }
 
     .uno{
@@ -590,6 +603,7 @@
         bottom: 20%;
         left: 25%;    
     }
+    
     @-webkit-keyframes rotacion {
         from{
             background-position: left center    ;
@@ -613,9 +627,6 @@
             transform: rotateZ(360deg);
         }
     }
-
-
-
     </style>
 </body>
 </html>
