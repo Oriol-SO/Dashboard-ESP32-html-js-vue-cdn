@@ -23,6 +23,8 @@ let app = new Vue({
         nombreest:'Verano',
         estado_motor:0,
         tiempo:0,
+        fecha:'',
+        route:'https://script.google.com/macros/s/AKfycbxV2LJms8qHX5noSd93nOyOCvSwptI9PtDSHNhe7gRpT5Y3SCVqZWO_3RfsHqP-l1nzPg/exec',
        // hume:0,
         count:0,
        datos:{
@@ -41,6 +43,17 @@ let app = new Vue({
             'mdi-linkedin',
             'mdi-instagram',
         ],
+        titles:[
+            'HORA',
+            'TEMP',
+            'HUME',
+            'LLUVIA',
+            'ESTA',
+            'MOTOR'
+        ],
+        historial:[]
+            
+        
     }
 },computed:{
     hume(){
@@ -80,6 +93,7 @@ mounted(){
                 if(this.count==4){
                     this.count=0;
                     this.ejecutor();
+                    this.enviardatos_google_sheet();
                 }
                 if(this.num==3){
                     this.cargar=true;
@@ -95,7 +109,7 @@ mounted(){
 
             //setInterval(this.ejecutor(),5000)
         })
-        this.cargardatos();
+       this.cargardatos();
         
              
 },methods:{
@@ -390,6 +404,41 @@ mounted(){
             {input:[39,9,1,11,3],output:[1]},
             {input:[38,4,0,8,1],output:[1]}
         ],{load:true});
+    },
+    enviardatos_google_sheet(){
+        var fecha=new Date();
+        this.fecha=fecha.toLocaleDateString();
+        var lluv=this.datos.lluvia?'Si':'No';
+        var mot=this.estado_motor?'Prendido':'Apagado';
+        axios.get(this.route+'?temp='+this.datos.temperatura+'°C&date='+fecha.toLocaleString()+'&hume='+this.datos.humedad+'&lluvia='+lluv+'&estacion='+this.get_estacion(this.datos.estacion)+'&motor='+mot)
+        this.add_historial(fecha);
+    },add_historial(fecha){
+        if(this.historial.length>11){
+            this.historial=[]
+        }
+        this.historial.push({
+            temp:this.datos.temperatura+'°C',
+            hume:this.datos.humedad+' %',
+            lluvia:this.datos.lluvia?'Si':'No',
+            estacion:this.get_estacion(this.datos.estacion),
+            motor:this.estado_motor,
+            fecha:fecha.toLocaleTimeString(),
+        });
+        
+    },
+    get_estacion(est){
+        switch(est){
+            case 1:
+                return 'Verano'
+            case 2:
+                return 'Invierno'
+            case 3:
+                return 'Otoño'
+            case 4:
+                return 'Primavera'
+            default:
+                return ''
+        }
     }
 }
 
