@@ -24,4 +24,4 @@ ademas de configurar los puertos de mqtt
 
 si estas interesado en implementarlo comunicate conmigo
 
-![Texto alternativo](public/imagen.png)
+![Texto alternativo](public/funcionamiento.JPG)
