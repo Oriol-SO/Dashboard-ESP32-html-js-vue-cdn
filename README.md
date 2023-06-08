@@ -21,3 +21,5 @@ cabe recalcar que los tensiometros simulan las estaciones y la temperatura
 puede cambiarlo y configurar los parametros en el codigo de arduino en la carpeta json
 
 ademas de configurar los puertos de mqtt
+
+si estas interesado en implementarlo comunicate conmigo
