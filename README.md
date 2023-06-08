@@ -23,3 +23,5 @@ puede cambiarlo y configurar los parametros en el codigo de arduino en la carpet
 ademas de configurar los puertos de mqtt
 
 si estas interesado en implementarlo comunicate conmigo
+
+![Texto alternativo](public/imagen.png)
