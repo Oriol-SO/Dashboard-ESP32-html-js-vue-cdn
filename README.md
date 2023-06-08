@@ -2,6 +2,11 @@
 
 Este dashboar utiliza algunas librerias y frameforks con cdn tales como brain.js para la red neuronal, vue.js y mqtt.js para la comunicacion del esp32 con la pagina
 
+el funcionamiento consta en lo siquiente
+el esp32 envía datos que recauda de los sensores y la pagina por medio de una red neuronal evalua si debe o no hacer funcionar el motor que en este caso usamos una licuadora que simula un aspersor de agua
+
+la finalidad es lograr que en un huerto se riegue de forma automatica cuando lo requiera gracias a la red neuronal 
+
 para ejecutar solo tener instalado node.js 
 
 ```
